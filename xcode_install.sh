@@ -25,15 +25,15 @@ detect_osx_version() {
     if [[ $result =~ "10.7" ]]; then
         osxversion="10.7"
         osxvername="Lion"
-        cltools=xcode452cltools10_76938212a.dmg
-        mountpath="/Volumes/Command Line Tools (Lion)"
-        mpkg="Command Line Tools (Lion).mpkg"
+        dmg=xcode4520418508a.dmg
+        mountpath="/Volumes/Xcode"
+        mpkg="Xcode.mpkg"
     elif [[ $result =~ "10.8" ]]; then
         osxversion="10.8"
         osxvername="Mountain Lion"
-        cltools=xcode452cltools10_86938211a.dmg
-        mountpath="/Volumes/Command Line Tools (Mountain Lion)"
-        mpkg="Command Line Tools (Mountain Lion).mpkg"
+        dmg=xcode4520418508a.dmg
+        mountpath="/Volumes/Xcode"
+        mpkg="Xcode.mpkg"
     else
         unsupported_osxversion
     fi
@@ -42,39 +42,38 @@ detect_osx_version() {
 }
 
 check_tools() {
-    RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
+    RECEIPT_FILE=/var/db/receipts/com.apple.pkg.XcodeMAS_iOSSDK_6_0.bom
 
     if [ -f "$RECEIPT_FILE" ]; then
-        echo -e "$info Command Line Tools are already installed. Exiting..."
+        echo -e "$info Xcode is already installed. Exiting..."
         exit 1
     fi
 }
 
 download_tools () {
     # Use curl to download the appropriate installer to tmp
-    if [ ! -f /tmp/$cltools ]; then
-        echo -e "$info Downloading Command Line Tools for Mac OS X $osxversion"
-        cd /tmp && curl -O $webserver/$cltools
+    if [ ! -f /tmp/$dmg ]; then
+        echo -e "$info Downloading Xcode for Mac OS X $osxversion"
+        cd /tmp && curl -O $webserver/$dmg
     else
-        echo -e "$info $cltools already downloaded to /tmp/$cltools."
+        echo -e "$info $dmg already downloaded to /tmp/$dmg."
     fi
 }
 
 install_tools() {
     # Mount the Command Line Tools dmg
-    echo -e "$info Mounting Command Line Tools..."
-    hdiutil mount /tmp/$cltools
+    echo -e "$info Mounting Xcode..."
+    hdiutil mount /tmp/$dmg
     # Run the Command Line Tools Installer
-    echo -e "$info Installing Command Line Tools..."
-    #installer -pkg "/Volumes/Command Line Tools (Lion)/Command Line Tools (Lion).mpkg" -target "/Volumes/Macintosh HD"
-    installer -pkg "$mountpath/$mpkg" -target "/Volumes/Macintosh HD"
+    echo -e "$info Installing Xcode..."
+    cp -R /Volumes/Xcode/Xcode.app /Applications/Xcode.app
     # Unmount the Command Line Tools dmg
-    echo -e "$info Unmounting Command Line Tools..."
+    echo -e "$info Unmounting XCode..."
     hdiutil unmount "$mountpath"
 }
 
 cleanup () {
-    #rm /tmp/$cltools
+    #rm /tmp/$dmg
     echo "$info Cleanup complete."
     exit 0
 }
