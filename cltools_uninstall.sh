@@ -40,10 +40,10 @@ detect_osx_version() {
 
 
 uninstall_tools() {
-    RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
-    RECEIPT_PLIST=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.plist
+    RECEIPT_FILES=("/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom")
+    RECEIPT_PLISTS=("/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.plist")
 
-    if [ ! -f "$RECEIPT_FILE" ]; then
+    if [ ! -f "${RECEIPT_FILES[0]}" ]; then
         echo -e "$info Nothing to remove. Exiting..."
         exit 1
     fi
@@ -53,11 +53,18 @@ uninstall_tools() {
     # Need to be at root
     cd /
     # Remove files and dirs mentioned in the "Bill of Materials" (BOM)
-    lsbom -fls $RECEIPT_FILE | sudo xargs -I{} rm -r "{}"
-    # remove the receipt
-    sudo rm $RECEIPT_FILE
-    # remove the plist
-    sudo rm $RECEIPT_PLIST
+    for bom in "${RECEIPT_FILES[@]}"
+    do
+        lsbom -fls $bom | sudo xargs -I{} rm -r "{}"
+        sudo rm $bom
+    done
+
+    # remove the plists
+    for plist in "${RECEIPT_PLISTS[@]}"
+    do
+        sudo rm $plist
+    done
+
     echo "$info Done! If XCode is running, restart it to have Command Line Tools appear as uninstalled."
 }
 
