@@ -8,10 +8,10 @@ warning="[warning]"
 error="[error]"
 
 check_root() {
-if [[ $EUID -ne 0 ]]; then
-   echo "$error This script must be run as root" 1>&2
-   exit 1
-fi
+    if [[ $EUID -ne 0 ]]; then
+        echo "$error This script must be run as root" 1>&2
+        exit 1
+    fi
 }
 
 unsupported_osxversion() {
@@ -42,13 +42,12 @@ detect_osx_version() {
 }
 
 check_tools() {
-RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
+    RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
 
-if [ -f "$RECEIPT_FILE" ]
-then
-    echo -e "$info Command Line Tools are already installed. Exiting..."
-    exit 1
-fi
+    if [ -f "$RECEIPT_FILE" ]; then
+        echo -e "$info Command Line Tools are already installed. Exiting..."
+        exit 1
+    fi
 }
 
 download_tools () {
@@ -62,22 +61,22 @@ download_tools () {
 }
 
 install_tools() {
-  # Mount the Command Line Tools dmg
-  echo -e "$info Mounting Command Line Tools..."
-  hdiutil mount /tmp/$cltools
-  # Run the Command Line Tools Installer
-  echo -e "$info Installing Command Line Tools..."
-  #installer -pkg "/Volumes/Command Line Tools (Lion)/Command Line Tools (Lion).mpkg" -target "/Volumes/Macintosh HD"
-  installer -pkg "$mountpath/$mpkg" -target "/Volumes/Macintosh HD"
-  # Unmount the Command Line Tools dmg
-  echo -e "$info Unmounting Command Line Tools..."
-  hdiutil unmount "$mountpath"
+    # Mount the Command Line Tools dmg
+    echo -e "$info Mounting Command Line Tools..."
+    hdiutil mount /tmp/$cltools
+    # Run the Command Line Tools Installer
+    echo -e "$info Installing Command Line Tools..."
+    #installer -pkg "/Volumes/Command Line Tools (Lion)/Command Line Tools (Lion).mpkg" -target "/Volumes/Macintosh HD"
+    installer -pkg "$mountpath/$mpkg" -target "/Volumes/Macintosh HD"
+    # Unmount the Command Line Tools dmg
+    echo -e "$info Unmounting Command Line Tools..."
+    hdiutil unmount "$mountpath"
 }
 
 cleanup () {
-  #rm /tmp/$cltools
-  echo "$info Cleanup complete."
-  exit 0
+    #rm /tmp/$cltools
+    echo "$info Cleanup complete."
+    exit 0
 }
 
 # Make sure only root can run our script

@@ -5,10 +5,10 @@ warning="[warning]"
 error="[error]"
 
 check_root() {
-if [[ $EUID -ne 0 ]]; then
-   echo "$error This script must be run as root" 1>&2
-   exit 1
-fi
+    if [[ $EUID -ne 0 ]]; then
+        echo "$error This script must be run as root" 1>&2
+        exit 1
+    fi
 }
 
 unsupported_osxversion() {
@@ -43,8 +43,7 @@ uninstall_tools() {
     RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
     RECEIPT_PLIST=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.plist
 
-    if [ ! -f "$RECEIPT_FILE" ]
-    then
+    if [ ! -f "$RECEIPT_FILE" ]; then
         echo -e "$info Nothing to remove. Exiting..."
         exit 1
     fi
