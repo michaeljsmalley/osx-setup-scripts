@@ -12,3 +12,13 @@ looks like so:
 ```bash
 webserver="http://yourserver.com/pathtodirectorywithsoftware/"
 ```
+
+The required software to place on this webserver in the above directory is:
+
+ * **Xcode**
+    * xcode4520418508a.dmg
+ * **Command Line Tools (Lion)**
+    * xcode452cltools10_76938212a.dmg
+ * **Command Line Tools (Mountain Lion)**
+    * xcode452cltools10_86938211a.dmg
+
