@@ -25,7 +25,7 @@ check_app() {
 download_app() {
     # Use curl to download the appropriate installer to tmp
     if [ ! -f /tmp/$dmg ]; then
-        echo -e "$info Downloading Xcode for Mac OS X $osxversion"
+        echo -e "$info Downloading Xcode for Mac OS X"
         cd /tmp && curl -O $webserver/$dmg
     else
         echo -e "$info $dmg already downloaded to /tmp/$dmg."
