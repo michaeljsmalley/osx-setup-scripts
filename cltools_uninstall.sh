@@ -11,11 +11,6 @@ check_root() {
     fi
 }
 
-unsupported_osxversion() {
-    echo "$error This machine is running an unsupported version of OS X"
-    exit 1
-}
-
 detect_osx_version() {
     result=`sw_vers -productVersion`
 
@@ -32,7 +27,8 @@ detect_osx_version() {
         mountpath="/Volumes/Command Line Tools (Mountain Lion)"
         mpkg="Command Line Tools (Mountain Lion).mpkg"
     else
-        unsupported_osxversion
+        echo "$error This machine is running an unsupported version of OS X"
+        exit 1
     fi
 
     echo -e "$info Detected OS X $osxversion $osxvername"
@@ -43,11 +39,8 @@ uninstall_tools() {
     RECEIPT_FILES=("/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom")
     RECEIPT_PLISTS=("/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.plist")
 
-    if [ ! -f "${RECEIPT_FILES[0]}" ]; then
-        echo -e "$info Nothing to remove. Exiting..."
-        exit 1
-    fi
-
+    [ ! -f "${RECEIPT_FILES[0]}" ] && echo -e "$info Nothing to remove. Exiting..." && exit 0
+    
     echo -e "$info Command Line Tools installed. Removing..."
     
     # Need to be at root

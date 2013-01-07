@@ -14,11 +14,6 @@ check_root() {
     fi
 }
 
-unsupported_osxversion() {
-    echo "$error This machine is running an unsupported version of OS X"
-    exit 1
-}
-
 detect_osx_version() {
     result=`sw_vers -productVersion`
 
@@ -35,7 +30,8 @@ detect_osx_version() {
         mountpath="/Volumes/Command Line Tools (Mountain Lion)"
         mpkg="Command Line Tools (Mountain Lion).mpkg"
     else
-        unsupported_osxversion
+        echo "$error This machine is running an unsupported version of OS X" 1>&2
+        exit 1
     fi
 
     echo -e "$info Detected OS X $osxversion $osxvername"
@@ -43,11 +39,7 @@ detect_osx_version() {
 
 check_tools() {
     RECEIPT_FILE=/var/db/receipts/com.apple.pkg.DeveloperToolsCLI.bom
-
-    if [ -f "$RECEIPT_FILE" ]; then
-        echo -e "$info Command Line Tools are already installed. Exiting..."
-        exit 1
-    fi
+    [ -f "$RECEIPT_FILE" ] && echo "$info Command Line Tools are already installed. Exiting..." && exit 0
 }
 
 download_tools () {
@@ -66,7 +58,6 @@ install_tools() {
     hdiutil mount /tmp/$cltools
     # Run the Command Line Tools Installer
     echo -e "$info Installing Command Line Tools..."
-    #installer -pkg "/Volumes/Command Line Tools (Lion)/Command Line Tools (Lion).mpkg" -target "/Volumes/Macintosh HD"
     installer -pkg "$mountpath/$mpkg" -target "/Volumes/Macintosh HD"
     # Unmount the Command Line Tools dmg
     echo -e "$info Unmounting Command Line Tools..."
