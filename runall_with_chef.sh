@@ -17,7 +17,7 @@ check_root() {
 runall() {
     /bin/bash cltools_install.sh
     /bin/bash xcode_install.sh
-    /usr/bin/curl -L https://opscode.com/chef/install.sh | sudo /bin/bash
+    /usr/bin/curl -L -k https://opscode.com/chef/install.sh | sudo /bin/bash
 }
 
 cleanup () {
