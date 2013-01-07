@@ -6,6 +6,10 @@ source config
 info="[info]"
 warning="[warning]"
 error="[error]"
+appdir="/Applications"
+dmg=xcode4520418508a.dmg
+mountpath="/Volumes/Xcode"
+mpkg="Xcode.mpkg"
 
 check_root() {
     if [[ $EUID -ne 0 ]]; then
@@ -14,43 +18,11 @@ check_root() {
     fi
 }
 
-unsupported_osxversion() {
-    echo "$error This machine is running an unsupported version of OS X"
-    exit 1
+check_app() {
+    [ -d $appdir/Xcode.app ] && echo -e "$info Xcode is already installed. Exiting..." && exit 0
 }
 
-detect_osx_version() {
-    result=`sw_vers -productVersion`
-
-    if [[ $result =~ "10.7" ]]; then
-        osxversion="10.7"
-        osxvername="Lion"
-        dmg=xcode4520418508a.dmg
-        mountpath="/Volumes/Xcode"
-        mpkg="Xcode.mpkg"
-    elif [[ $result =~ "10.8" ]]; then
-        osxversion="10.8"
-        osxvername="Mountain Lion"
-        dmg=xcode4520418508a.dmg
-        mountpath="/Volumes/Xcode"
-        mpkg="Xcode.mpkg"
-    else
-        unsupported_osxversion
-    fi
-
-    echo -e "$info Detected OS X $osxversion $osxvername"
-}
-
-check_tools() {
-    RECEIPT_FILE=/var/db/receipts/com.apple.pkg.XcodeMAS_iOSSDK_6_0.bom
-
-    if [ -f "$RECEIPT_FILE" ]; then
-        echo -e "$info Xcode is already installed. Exiting..."
-        exit 1
-    fi
-}
-
-download_tools () {
+download_app() {
     # Use curl to download the appropriate installer to tmp
     if [ ! -f /tmp/$dmg ]; then
         echo -e "$info Downloading Xcode for Mac OS X $osxversion"
@@ -60,15 +32,15 @@ download_tools () {
     fi
 }
 
-install_tools() {
-    # Mount the Command Line Tools dmg
+install_app() {
+    # Mount the Xcode dmg
     echo -e "$info Mounting Xcode..."
     hdiutil mount /tmp/$dmg
-    # Run the Command Line Tools Installer
+    # Copy the Xcode app to /Applications
     echo -e "$info Installing Xcode..."
-    cp -R /Volumes/Xcode/Xcode.app /Applications/Xcode.app
-    # Unmount the Command Line Tools dmg
-    echo -e "$info Unmounting XCode..."
+    cp -R $mountpath/Xcode.app $appdir/Xcode.app
+    # Unmount the Xcode dmg
+    echo -e "$info Unmounting Xcode..."
     hdiutil unmount "$mountpath"
 }
 
@@ -80,13 +52,11 @@ cleanup () {
 
 # Make sure only root can run our script
 check_root
-# Detect and set the version of OS X for the rest of the script
-detect_osx_version
-# Check for if tools are already installed by looking for a receipt file
-check_tools
+# Check to see if Xcode is already installed
+check_app
 # Check for and if necessary download the required dmg
-download_tools
-# Start the appropriate installer for the correct version of OSX
-install_tools
+download_app
+# Install Xcode
+install_app
 # Cleanup files used during script
 cleanup
