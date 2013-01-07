@@ -7,8 +7,10 @@ a vanilla OS X machine running OS X 10.7 / 10.8.
 Usage
 -----
 
-The install and uninstall scripts can be run individually, or the `bootstrap`
+The install and uninstall scripts can be run individually, or the `runall`
 script can be used, which is intended to call all of the other install scripts.
+
+`runall_with_chef` runs the Chef omnibus installer as a final step.
 
 Prerequisites
 -------------
